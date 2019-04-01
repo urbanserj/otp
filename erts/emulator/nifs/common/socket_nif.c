@@ -168,6 +168,15 @@
 #include <setns.h>
 #endif
 
+#ifdef HAVE_LINUX_NETLINK_H
+# ifdef HAVE_ASM_TYPES_H
+#  include <asm/types.h>
+# endif
+# include <linux/netlink.h>
+#else
+#  undef AF_NETLINK
+#endif
+
 #define HAVE_UDP
 
 /* SCTP support -- currently for UNIX platforms only: */
@@ -506,6 +515,7 @@ typedef union {
 #define SOCKET_DOMAIN_LOCAL       1
 #define SOCKET_DOMAIN_INET        2
 #define SOCKET_DOMAIN_INET6       3
+#define SOCKET_DOMAIN_NETLINK     4
 
 /* type */
 #define SOCKET_TYPE_STREAM        1
@@ -16472,6 +16482,11 @@ BOOLEAN_T edomain2domain(int edomain, int* domain)
 #ifdef HAVE_SYS_UN_H
     case SOCKET_DOMAIN_LOCAL:
         *domain = AF_UNIX;
+        break;
+#endif
+#ifdef AF_NETLINK
+    case SOCKET_DOMAIN_NETLINK:
+        *domain = AF_NETLINK;
         break;
 #endif
 

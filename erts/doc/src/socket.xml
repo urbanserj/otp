@@ -383,6 +383,9 @@
           <item><p><c>seqpacket</c>: <c>sctp</c></p></item>
 	</list>
 
+	<p>The <c>netlink</c> domain socket is only supported on the linux
+    platform.</p>
+
 	<p>The <c>Extra</c> argument is intended for "obscure" options.
 	Currently the only supported option is <c>netns</c>, which
 	is only supported on the linux platform.</p>

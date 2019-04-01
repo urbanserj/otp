@@ -137,7 +137,7 @@
 
 
 %% We support only a subset of all domains.
--type domain() :: local | inet | inet6.
+-type domain() :: local | inet | inet6 | netlink.
 
 %% We support only a subset of all types.
 %% RDM - Reliably Delivered Messages
@@ -586,10 +586,11 @@
         #{level := integer(), type := integer(), data := binary()}.
 
 
--define(SOCKET_DOMAIN_LOCAL, 1).
--define(SOCKET_DOMAIN_UNIX,  ?SOCKET_DOMAIN_LOCAL).
--define(SOCKET_DOMAIN_INET,  2).
--define(SOCKET_DOMAIN_INET6, 3).
+-define(SOCKET_DOMAIN_LOCAL,   1).
+-define(SOCKET_DOMAIN_UNIX,    ?SOCKET_DOMAIN_LOCAL).
+-define(SOCKET_DOMAIN_INET,    2).
+-define(SOCKET_DOMAIN_INET6,   3).
+-define(SOCKET_DOMAIN_NETLINK, 4).
 
 -define(SOCKET_TYPE_STREAM,    1).
 -define(SOCKET_TYPE_DGRAM,     2).
@@ -2422,10 +2423,11 @@ peername(#socket{ref = SockRef}) ->
 -spec enc_domain(Domain) -> non_neg_integer() when
       Domain :: domain().
 
-enc_domain(local)  -> ?SOCKET_DOMAIN_LOCAL;
-enc_domain(inet)   -> ?SOCKET_DOMAIN_INET;
-enc_domain(inet6)  -> ?SOCKET_DOMAIN_INET6;
-enc_domain(Domain) -> throw({error, {invalid_domain, Domain}}).
+enc_domain(local)    -> ?SOCKET_DOMAIN_LOCAL;
+enc_domain(inet)     -> ?SOCKET_DOMAIN_INET;
+enc_domain(inet6)    -> ?SOCKET_DOMAIN_INET6;
+enc_domain(netlink)  -> ?SOCKET_DOMAIN_NETLINK;
+enc_domain(Domain)   -> throw({error, {invalid_domain, Domain}}).
 
 -spec enc_type(Domain, Type) -> non_neg_integer() when
       Domain :: domain(),
@@ -2449,7 +2451,7 @@ enc_protocol(dgram,     udp)  -> ?SOCKET_PROTOCOL_UDP;
 enc_protocol(seqpacket, sctp) -> ?SOCKET_PROTOCOL_SCTP;
 enc_protocol(raw,       icmp) -> ?SOCKET_PROTOCOL_ICMP;
 enc_protocol(raw,       igmp) -> ?SOCKET_PROTOCOL_IGMP;
-enc_protocol(raw,       {raw, P} = RAW) when is_integer(P) -> RAW;
+enc_protocol(_Type,     {raw, P} = RAW) when is_integer(P) -> RAW;
 enc_protocol(Type, Proto) -> 
     throw({error, {invalid_protocol, {Type, Proto}}}).
 
